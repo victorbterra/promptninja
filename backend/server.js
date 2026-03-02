@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import './config/db.js';
 import solucoesRoutes from './src/routes/solucoesRoutes.js';
 
 const app = express();

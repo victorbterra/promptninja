@@ -1,5 +1,5 @@
 import express from 'express';
-import { buscarSolucao } from '../controllers/solucoesController';
+import { buscarSolucao } from '../controllers/solucoesController.js';
 
 const router = express.Router();
 
