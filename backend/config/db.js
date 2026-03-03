@@ -20,4 +20,4 @@ const testarConexao = async () =>{
 
 testarConexao();
 
-export default sql
+export default sql;
