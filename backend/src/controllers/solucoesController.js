@@ -1,18 +1,19 @@
-import sql from '../../config/db.js';
-import {AppError} from '../utils/AppError.js';
+import sql from "../config/db.js";
+import { AppError } from "../utils/AppError.js";
 
-export const buscarSolucao = async (req, res,next) => {
-    try{
-        const {sistema, problema } = req.body;
+export const buscarSolucao = async (req, res, next) => {
+  try {
+    const { sistema, problema } = req.body;
 
+    if (!sistema || !problema) {
+      return next(
+        new AppError("Escolha o sistema operacional e digite o problema", 400),
+      );
+    }
 
-        if(!sistema || !problema){
-            return next(new AppError("Escolha o sistema operacional e digite o problema",400))
-        }
+    const termoBusca = `%${problema}%`;
 
-        const termoBusca = `%${problema}%`;
-
-        const resultados = await sql`
+    const resultados = await sql`
         SELECT
             c.problema,
             c.codigo_terminal,
@@ -24,16 +25,18 @@ export const buscarSolucao = async (req, res,next) => {
             c.problema ILIKE ${termoBusca}
         `;
 
-        if(resultados.length === 0) {
-            return next(new AppError("Nenhum comando encontrado para este problema.",404))
-        }
-
-        res.json({
-            mensagem:"Comandos encontrados com sucesso !",
-            totalEncontrado:resultados.length,
-            resultados: resultados
-        })
-    } catch(erro) {
-        next(erro);
+    if (resultados.length === 0) {
+      return next(
+        new AppError("Nenhum comando encontrado para este problema.", 404),
+      );
     }
-}
+
+    res.json({
+      mensagem: "Comandos encontrados com sucesso !",
+      totalEncontrado: resultados.length,
+      resultados: resultados,
+    });
+  } catch (erro) {
+    next(erro);
+  }
+};
