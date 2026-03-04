@@ -1,8 +1,14 @@
 import sql from '../../config/db.js';
+import {AppError} from '../utils/AppError.js';
 
-export const buscarSolucao = async (req, res) => {
+export const buscarSolucao = async (req, res,next) => {
     try{
         const {sistema, problema } = req.body;
+
+
+        if(!sistema || !problema){
+            return next(new AppError("Escolha o sistema operacional e digite o problema",400))
+        }
 
         const termoBusca = `%${problema}%`;
 
@@ -19,10 +25,7 @@ export const buscarSolucao = async (req, res) => {
         `;
 
         if(resultados.length === 0) {
-            return res.status(404).json({
-                mensagem:"Não encontramos nenhum comandos para isso.",
-                resultados: []
-            });
+            return next(new AppError("Nenhum comando encontrado para este problema.",404))
         }
 
         res.json({
@@ -31,7 +34,6 @@ export const buscarSolucao = async (req, res) => {
             resultados: resultados
         })
     } catch(erro) {
-        console.error("Erro na busca",erro.message);
-        res.status(500).json({erro:"Erro interno do servidor."});
+        next(erro);
     }
 }
